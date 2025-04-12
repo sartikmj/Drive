@@ -10,6 +10,9 @@ const dotenv = require("dotenv")
 dotenv.config() //this will import the variables from .env file and make them 
 // available in process.env , and can be accessed using process.env.VARIABLE_NAME anywhere in the project
 
+const connectToDB = require("./config/db") //importing the db connection file , u cal also use different name other than function name for varaible here and calling it will directly call the function 
+
+connectToDB() //this will connect to the database using the function connectToDB we created in db.js file
 
 const app = express();
 

@@ -10,3 +10,5 @@ function connectToDB(){
 
 module.exports = connectToDB; //exporting the function so that we can use it in app.js
 //we will be using this function in app.js to connect to the database
+
+//all the work of database connection is done in app.js file

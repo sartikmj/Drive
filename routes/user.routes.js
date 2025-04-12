@@ -39,3 +39,5 @@ router.post('/register',
 //we have to export the router so that we can use it in app.js
 module.exports = router;
 //now we will import this file in app.js and use it as middleware
+
+//we will require this model inside user.routes file in routes folder

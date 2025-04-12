@@ -1,9 +1,17 @@
 const express = require("express");
 
-const app = express();
 
 //importing routes
 const userRouter = require("./routes/user.routes")
+
+//importing .env file
+const dotenv = require("dotenv")
+
+dotenv.config() //this will import the variables from .env file and make them 
+// available in process.env , and can be accessed using process.env.VARIABLE_NAME anywhere in the project
+
+
+const app = express();
 
 app.set('view engine', 'ejs');
 

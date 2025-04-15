@@ -6,6 +6,10 @@ const router = express.Router();
 
 const { body, validationResult } = require("express-validator")
 
+const userModel = require('../models/user.model')
+
+const bcrypt = require('bcrypt')
+
 // router.get('/test',(req,res)=>{
 //     res.send("User test route")
 // })
@@ -19,9 +23,11 @@ router.get('/register', (req, res) => {
 router.post('/register',
     // body() Used to define validation rules on request body fields.
     body('email').trim().isEmail().isLength({ min:13 }), //checking if the given email is actually an email or not
-    body('passworrd').trim().isLength({ min: 5 }), //checking if the password is of minimum 5 characters or not
+    body('password').trim().isLength({ min: 5 }), //checking if the password is of minimum 5 characters or not
     body('username').trim().isLength({ min: 3 }),
-    (req, res) => {
+
+    async (req, res) => {
+
         // validationResult(req) Used to check if the validations failed and extract error messages.
 
         const errors = validationResult(req) //this will give us an array of errors if any
@@ -33,7 +39,20 @@ router.post('/register',
                 message: "Invalid Data"
             }) 
         }
+
+        //object destructuring
+        const {email, username, password } = req.body; //taking out email,username,password from req.body
+
+        const hashPassword = await bcrypt.hash(password,10) //10 is the number of times it is hashed 
+
+        const newUser = await userModel.create({ //create a new user with these 3 properties given
+            email,
+            username,
+            password : hashPassword
+        })
         
+        res.json(newUser) //sending newUser to the client 
+
     })
 
 //we have to export the router so that we can use it in app.js

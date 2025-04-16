@@ -16,6 +16,8 @@ connectToDB() //this will connect to the database using the function connectToDB
 
 const app = express();
 
+const cookieParser = require('cookie-parser'); //to store jwt , will be used as Middleware just below
+
 app.set('view engine', 'ejs');
 
 //imported routes will be used as Middleware , to get to the routes we have to use the same name as in the file
@@ -27,6 +29,8 @@ app.set('view engine', 'ejs');
 //     res.render('index')
 // })
 
+
+app.use(cookieParser())
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));

@@ -18,6 +18,9 @@ const app = express();
 
 const cookieParser = require('cookie-parser'); //to store jwt , will be used as Middleware just below
 
+
+const indexRouter = require('./routes/index.routes')
+
 app.set('view engine', 'ejs');
 
 //imported routes will be used as Middleware , to get to the routes we have to use the same name as in the file
@@ -35,7 +38,9 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/user', userRouter)
+//imported routes to be used here like a middleware
+app.use('/', indexRouter) //we can directly access home route by /home , as here it is just '/'
+app.use('/user', userRouter) //before using any route of userRouter first it will have /user/login
 
 
 app.listen(3000,()=>{

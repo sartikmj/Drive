@@ -10,9 +10,9 @@ const dotenv = require("dotenv")
 dotenv.config() //this will import the variables from .env file and make them 
 // available in process.env , and can be accessed using process.env.VARIABLE_NAME anywhere in the project
 
-const connectToDB = require("./config/db") //importing the db connection file , u cal also use different name other than function name for varaible here and calling it will directly call the function 
+// const connectToDB = require("./config/db") //importing the db connection file , u cal also use different name other than function name for varaible here and calling it will directly call the function
 
-connectToDB() //this will connect to the database using the function connectToDB we created in db.js file
+// connectToDB() //this will connect to the database using the function connectToDB we created in db.js file
 
 const app = express();
 
@@ -34,6 +34,9 @@ app.set('view engine', 'ejs');
 
 
 app.use(cookieParser())
+app.listen(3000, () => {
+	console.log(`http://localhost:${3000}`);
+})
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
@@ -41,11 +44,6 @@ app.use(express.urlencoded({ extended: true }));
 //imported routes to be used here like a middleware
 app.use('/', indexRouter) //we can directly access home route by /home , as here it is just '/'
 app.use('/user', userRouter) //before using any route of userRouter first it will have /user/login
-
-
-app.listen(3000,()=>{
-    console.log("Server is running on port 3000")
-})
 
 //we are adding inside package.json in script section
 // "start": "npx nodemon app.js"

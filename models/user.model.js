@@ -25,6 +25,12 @@ const userSchema = new mongoose.Schema({
         required:true,
         trim:true,
         minlength:[5,"Password must be atleast 5 characters long"] 
+    },
+    avtar:{
+        type:String
+    },
+    coverImage:{
+        type:String
     }
 })
 

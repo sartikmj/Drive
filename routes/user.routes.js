@@ -12,6 +12,9 @@ const bcrypt = require('bcrypt')
 
 const jwt = require('jsonwebtoken')
 
+const {upload} = require("../middleware/multer.js");
+const cloudinaryUpload = require("../middleware/cloundinary.js");
+
 // router.get('/test',(req,res)=>{
 //     res.send("User test route")
 // })
@@ -27,33 +30,44 @@ router.post('/register',
     body('email').trim().isEmail().isLength({ min: 13 }), //checking if the given email is actually an email or not
     body('password').trim().isLength({ min: 5 }), //checking if the password is of minimum 5 characters or not
     body('username').trim().isLength({ min: 3 }),
-
+    // upload.fields() Used to handle file uploads for multiple fields.
+    upload.fields([
+        {name: 'avatar', maxCount: 1},
+        {name: 'coverImage', maxCount: 1}
+    ]),
     async (req, res) => {
-
-        // validationResult(req) Used to check if the validations failed and extract error messages.
-
-        const errors = validationResult(req) //this will give us an array of errors if any
-
-        if (!errors.isEmpty()) {
-            //sending error to webpage
-            return res.status(400).json({
-                errors: errors.array(), //this will give us the array of errors in json format
-                message: "Invalid Data"
-            })
-        }
-
         //object destructuring
         const { email, username, password } = req.body; //taking out email,username,password from req.body
+        const hashPassword = await bcrypt.hash(password, 10) //10 is the number of times it is hashed
 
-        const hashPassword = await bcrypt.hash(password, 10) //10 is the number of times it is hashed 
+        //getting avatra and cover image from req.files
 
-        const newUser = await userModel.create({ //create a new user with these 3 properties given
+        const avtarLocalPath = req.files.avatar ? req.files.avatar[0].path : res.status(400).json({ message: "Avtar is required" });
+        const coverImageLocalPath = req.files.coverImage ? req.files.coverImage[0].path : res.status(400).json({ message: "Cover Image is required" });
+        console.log(avtarLocalPath, coverImageLocalPath);
+        //uploading the image to cloudinary
+        const avtarPath = await cloudinaryUpload(avtarLocalPath);
+        const coverImagePath = await cloudinaryUpload(coverImageLocalPath);
+
+        let newUser ={
             email,
             username,
-            password: hashPassword
-        })
+            password: hashPassword,
+            avatar: avtarPath,
+            coverImage: coverImagePath
+        }
+        res.json(newUser) //sending newUser to the client
+        console.log(newUser);
 
-        res.json(newUser) //sending newUser to the client 
+        // const newUser = await userModel.create({ //create a new user with these 3 properties given
+        //     email,
+        //     username,
+        //     password: hashPassword,
+        //     avatar: avtarPath,
+        //     coverImage: coverImagePath
+        // })
+        //
+        // res.json(newUser) //sending newUser to the client
 
     })
 
@@ -86,6 +100,7 @@ router.post('/login',
         const user = await userModel.findOne({
             username: username
         })
+
         //agar user nahi mila
         if (!user) {
             return res.status(400).json({
